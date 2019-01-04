@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<configuration>
+	<!--获取时间戳字符串，key为名称，datePattern为格式化时间戳为指定格式字符串 -->
+	<property name="log.path" value="logs-api" />
+	
+<!-- 1. value=“logs” – 表示保存到程序运行目录，在tomcat中为bin目录  -->
+<!-- 2. value=“/logs” – 表示保存到系统目录  -->
+<!-- 3. value=“../logs” – 表示保存到程序运行目录的父目录 -->
+
+	<!-- 日志最大的历史天数 -->
+	<property name="maxHistory" value="30" />
+
+	<!--输出到文件info以上级别 -->
+	<appender name="info-log"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.path}/cloud-api-info.log</file>
+		 <filter class="ch.qos.logback.classic.filter.LevelFilter">  
+            <level>DEBUG</level>  
+            <onMatch>DENY</onMatch>  
+            <onMismatch>ACCEPT</onMismatch>  
+        </filter>  
+		
+		<!-- 分割规则 -->
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/cloud-api-info-%d{yyyyMMdd}-%i.log
+			</fileNamePattern>
+			<maxHistory>${maxHistory}</maxHistory>
+			<maxFileSize>10MB</maxFileSize>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+		<!-- 输出编码规则 -->
+		<!-- <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> 
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} 
+			- %msg%n</pattern> </encoder> -->
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %highlight(%-5p) %logger.%M %X{requestId} %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	<!--输出到文件debug级别 -->
+	<appender name="debug-log"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.path}/cloud-api-debug.log</file>
+		<!-- 过滤 -->
+		 <filter class="ch.qos.logback.classic.filter.LevelFilter">  
+            <level>DEBUG</level>  
+            <onMatch>ACCEPT</onMatch>  
+            <onMismatch>DENY</onMismatch>  
+        </filter>  
+        
+		<!-- 分割规则 -->
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/cloud-api-debug-%d{yyyyMMdd}-%i.log
+			</fileNamePattern>
+			<maxHistory>${maxHistory}</maxHistory>
+			<maxFileSize>10MB</maxFileSize>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+		<!-- 输出编码规则 -->
+		<!-- <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> 
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} 
+			- %msg%n</pattern> </encoder> -->
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %highlight(%-5p) %logger.%M %X{requestId} %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	
+	<appender name="controller-log"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.path}/cloud-api-controller.log</file>
+		
+		<!-- 分割规则 -->
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/cloud-api-controller-%d{yyyyMMdd}-%i.log
+			</fileNamePattern>
+			<maxHistory>${maxHistory}</maxHistory>
+			<maxFileSize>10MB</maxFileSize>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+		<!-- 输出编码规则 -->
+		<!-- <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> 
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} 
+			- %msg%n</pattern> </encoder> -->
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %highlight(%-5p) %logger.%M %X{requestId} %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<appender name="service-log"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.path}/cloud-api-service.log</file>
+		
+		<!-- 分割规则 -->
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>${log.path}/cloud-api-service-%d{yyyyMMdd}-%i.log
+			</fileNamePattern>
+			<maxHistory>${maxHistory}</maxHistory>
+			<maxFileSize>10MB</maxFileSize>
+			<totalSizeCap>3GB</totalSizeCap>
+		</rollingPolicy>
+		<!-- 输出编码规则 -->
+		<!-- <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> 
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} 
+			- %msg%n</pattern> </encoder> -->
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %highlight(%-5p) %logger.%M %X{requestId} %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+
+	<!-- 输出到控制台 -->
+	<appender name="console-log"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder charset="UTF-8">
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %highlight(%-5p) %logger.%M %X{requestId} %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	<logger name="com.cloud.api.controller" level="debug">
+        <appender-ref ref="controller-log"/>
+    </logger>
+    
+    <logger name="com.cloud.api.service" level="debug">
+        <appender-ref ref="service-log"/>
+    </logger>
+
+	<!-- 日志级别 -->
+	<root level="DEBUG">
+		<appender-ref ref="console-log" />
+		<appender-ref ref="debug-log" />
+		<appender-ref ref="info-log" />
+	</root>
+
+</configuration>

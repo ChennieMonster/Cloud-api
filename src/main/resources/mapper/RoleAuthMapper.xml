@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.api.mapper.RoleAuthMapper">
+
+    <resultMap id="BaseResultMap" type="com.cloud.api.dto.RoleAuthDTO">
+        <result column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="role_id" property="roleId" jdbcType="VARCHAR"/>
+        <result column="module_name" property="moduleName" jdbcType="VARCHAR"/>
+        <result column="action_auth" property="actionAuth" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="addRoleAuth" parameterType="java.util.List">
+        insert into sys_role_auth
+        (
+            `uuid`,
+            `role_id`,
+            `module_name`,
+            `action_auth`
+        )
+        values
+
+        <foreach collection="list" item="item" separator="," index="index">
+        (
+            #{item.uuid},
+            #{item.roleId},
+            #{item.moduleName},
+            #{item.actionAuth}
+        )
+        </foreach>
+
+    </insert>
+
+    <delete id="delRoleAuth" parameterType="java.lang.String">
+        delete from sys_role_auth where role_id in (${value})
+    </delete>
+
+    <select id="queryRoleAuth" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        `uuid`,`role_id`,`module_name`,`action_auth`
+        from sys_role_auth
+        where role_id = #{value}
+    </select>
+
+    <select id="queryRoleModuleAction" resultType="string">
+        select `action_auth`
+        from sys_role_auth
+        where role_id = #{roleId} and module_name = #{moduleName}
+    </select>
+
+    <select id="queryUserAuth" resultType="java.util.HashMap">
+        select
+            t1.`role_id`,
+            t1.`module_name`,
+            t1.`action_auth`,
+            t2.`role_type`,
+            t3.`region_id` as region,
+            p.`name` as project
+        from sys_role_auth t1
+        left JOIN sys_role t2 on t1.role_id=t2.uuid
+        left JOIN user_role_pro t3 on t1.role_id=t3.role_id
+        left JOIN project p on t3.pro_id=p.uuid
+        where t1.module_name=#{moduleName} and t1.role_id in (
+          select t4.role_id
+          from user_role_pro t4
+          LEFT JOIN `user` t5 on t4.user_id=t5.uuid
+          where t5.user_name=#{username}
+        )
+    </select>
+
+</mapper>

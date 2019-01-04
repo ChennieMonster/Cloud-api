@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.api.mapper.RoleMapper">
+
+    <resultMap id="BaseResultMap" type="com.cloud.api.dto.RoleDTO">
+        <result column="uuid" property="uuid" jdbcType="VARCHAR"/>
+        <result column="role_name" property="roleName" jdbcType="VARCHAR"/>
+        <result column="role_type" property="roleType" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="create_username" property="createUsername" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="queryRoleByName" resultMap="BaseResultMap">
+        select
+            `uuid`,
+            `role_name`,
+            `role_type`,
+            `remark`,
+            `create_username`,
+            `create_time`,
+            `update_time`
+        from sys_role
+        where role_type!='0' and role_name = #{value}
+    </select>
+
+    <insert id="addRole" parameterType="com.cloud.api.dto.RoleDTO">
+        insert into sys_role
+        (
+            `uuid`,
+            `role_name`,
+            `role_type`,
+            `remark`,
+            `create_username`,
+            `create_time`,
+            `update_time`
+        )
+        values
+        (
+            #{uuid},
+            #{roleName},
+            #{roleType},
+            #{remark},
+            #{createUsername},
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+    
+    <update id="editRole" parameterType="com.cloud.api.dto.RoleDTO">
+        update sys_role
+        <set>
+            <if test="roleName != null">`role_name` = #{roleName}, </if>
+            <if test="roleType != null">`role_type` = #{roleType}, </if>
+            <if test="remark != null">`remark` = #{remark}, </if>
+            <if test="updateTime != null">`update_time` = #{updateTime}</if>
+        </set>
+        where uuid = #{uuid}
+    </update>
+
+    <delete id="delRole" parameterType="java.lang.String">
+        delete from sys_role where uuid in (${value})
+    </delete>
+
+    <select id="queryRoleList" parameterType="com.cloud.api.dto.RoleDTO" resultMap="BaseResultMap">
+        select
+            `uuid`,
+            `role_name`,
+            `role_type`,
+            `remark`,
+            `create_username`,
+            `create_time`,
+            `update_time`
+        from sys_role
+        <where>
+            role_type!='0'
+            <if test="roleName != null"> and `role_name` like CONCAT('%',#{roleName},'%') </if>
+            <if test="roleType != null"> and `role_type` = #{roleType}, </if>
+            <if test="createTime != null"> and `create_time` &gt;= #{createTime} </if>
+            <if test="updateTime != null"> and `update_time` &lt;= #{updateTime} </if>
+        </where>
+    </select>
+
+    <select id="queryRoleCount" parameterType="com.cloud.api.dto.RoleDTO" resultType="java.lang.Long">
+        select count(1) from sys_role
+        <where>
+            role_type!='0'
+            <if test="roleName != null"> and `role_name` like CONCAT('%',#{roleName},'%') </if>
+            <if test="roleType != null"> and `role_type` = #{roleType}, </if>
+            <if test="createTime != null"> and `create_time` &gt;= #{createTime} </if>
+            <if test="updateTime != null"> and `create_time` &lt;= #{updateTime} </if>
+        </where>
+    </select>
+
+    <select id="queryRoleByID" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+            `uuid`,
+            `role_name`,
+            `role_type`,
+            `remark`,
+            `create_username`,
+            `create_time`,
+            `update_time`
+        from sys_role
+        where uuid = #{value}
+    </select>
+
+    <select id="getUserRoleList" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select
+            p.`name` as project,
+            r.`name` as region,
+            t2.`uuid`,
+            t2.`role_name`,
+            t2.`role_type`,
+            t2.`remark`,
+            t2.`create_username`,
+            t2.`create_time`,
+            t2.`update_time`
+        from user_role_pro t1
+        left JOIN sys_role t2 ON t1.role_id=t2.uuid
+        left JOIN `user` t3 ON t1.user_id=t3.uuid
+        left JOIN project p on t1.pro_id=p.uuid
+        left JOIN region r on t1.region_id=r.uuid
+        where
+          t3.user_name = #{value}
+    </select>
+
+</mapper>
